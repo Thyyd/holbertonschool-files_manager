@@ -9,16 +9,16 @@ const UsersController = {
 
     // Vérification de l'email et du pwd
     if (!email) {
-      return res.status(400).send('Missing email');
+      return res.status(400).json({ error: 'Missing email' });
     }
     if(!pwd) {
-      return res.status(400).send('Missing password');
+      return res.status(400).json({ error: 'Missing password' });
     }
 
     // Vérifie que l'email n'existe pas déjà dans la DB
     const emailExists = await db.client.db(db.database).collection('users').findOne({ email: email });
     if (emailExists) {
-      return res.status(400).send('Already exist');
+      return res.status(400).json({ error: 'Already exist' });
     }
 
     // Hashage du pwd
