@@ -1,5 +1,5 @@
-import db from '../utils/db';
 import crypto from 'crypto';
+import db from '../utils/db';
 
 const UsersController = {
   postNew: async (req, res) => {
@@ -11,7 +11,7 @@ const UsersController = {
     if (!email) {
       return res.status(400).json({ error: 'Missing email' });
     }
-    if(!pwd) {
+    if (!pwd) {
       return res.status(400).json({ error: 'Missing password' });
     }
 
