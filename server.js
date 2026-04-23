@@ -5,10 +5,10 @@ import routes from './routes/index';
 const app = express();
 const port = process.env.PORT || 5000;
 
-
+// Chargement des routes du fichier /routes/index
 app.use('/', routes);
 
 // Initialisation du serveur
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`API available on localhost port ${port}`);
 });
