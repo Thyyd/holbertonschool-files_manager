@@ -1,12 +1,12 @@
-import db from '../utils/db';
-import redis from '../utils/redis';
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
+import db from '../utils/db';
+import redis from '../utils/redis';
 
 const AuthController = {
   getConnect: async (req, res) => {
     // Récupération du header Authorization
-    const authorizationHeader = req.headers['authorization'];
+    const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -21,7 +21,6 @@ const AuthController = {
     if (!email || !password) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
 
     // Hashage du pwd pour comparer les données stockées dans la DB
     const hashedPwd = crypto.createHash('sha1').update(password).digest('hex');
@@ -51,6 +50,6 @@ const AuthController = {
     await redis.del(key);
     return res.status(204).send();
   },
-}
+};
 
 export default AuthController;
