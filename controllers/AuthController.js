@@ -18,6 +18,11 @@ const AuthController = {
     const decodedAuthorization = Buffer.from(base64Authorization, 'base64').toString('utf-8').split(':');
     const [email, password] = decodedAuthorization;
 
+    if (!email || !password) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+
     // Hashage du pwd pour comparer les données stockées dans la DB
     const hashedPwd = crypto.createHash('sha1').update(password).digest('hex');
     const userExists = await db.client.db(db.database).collection('users').findOne({ email, password: hashedPwd });
