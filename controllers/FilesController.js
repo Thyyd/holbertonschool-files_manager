@@ -48,7 +48,8 @@ const FilesController = {
     if (type === 'folder') {
       const document = { userId, name, type, isPublic, parentId };
       const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
-      // Retour de l'id ET des paramètres du doc. '...document' permet "d'étaler" les attributs de document.
+      // Retour de l'id ET des paramètres du doc.
+      // '...document' permet "d'étaler" les attributs de document.
       return res.status(201).json({ id: newDocument.insertedId, ...document });
     }
 
@@ -65,7 +66,8 @@ const FilesController = {
     // Stockage du file
     const document = { userId, name, type, isPublic, parentId, localPath: filePath };
     const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
-    // Retour de l'id ET des paramètres du doc. '...document' permet "d'étaler" les attributs de document.
+    // Retour de l'id ET des paramètres du doc.
+    // '...document' permet "d'étaler" les attributs de document.
     return res.status(201).json({ id: newDocument.insertedId, ...document });
   },
 };
