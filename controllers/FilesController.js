@@ -95,7 +95,7 @@ const FilesController = {
         return res.status(401).json({ error: 'Unauthorized' });
       }
 
-      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId: user._id.toString() });
+      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId });
       if (!fileToShow) {
         return res.status(404).json({ error: 'Not found' });
       }
