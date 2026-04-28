@@ -98,7 +98,7 @@ const FilesController = {
     try {
       const objectId = new ObjectId(id);
 
-      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId });
+      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId: new ObjectId(userId) });
       if (!fileToShow) {
         return res.status(404).json({ error: 'Not found' });
       }
@@ -128,7 +128,7 @@ const FilesController = {
 
     try {
       // Récupération des query parameters
-      const { parentId = '0', page = 0 } = req.query;
+      const { parentId = 0, page = 0 } = req.query;
 
       let parentIdFinal = parentId;
       if (parentId === 0 || parentId === '0') {
@@ -137,7 +137,7 @@ const FilesController = {
 
       // Création de la pagination en utilisant .aggregate
       const listFile = await db.client.db(db.database).collection('files').aggregate([
-        { $match: { userId, parentId: parentIdFinal } },
+        { $match: { userId: new ObjectId(userId), parentId: parentIdFinal } },
         { $skip: parseInt(page) * 20 },
         { $limit: 20 }
       ]).toArray();
