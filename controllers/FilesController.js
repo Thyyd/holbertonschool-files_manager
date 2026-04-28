@@ -76,26 +76,29 @@ const FilesController = {
     // '...document' permet "d'étaler" les attributs de document.
     return res.status(201).json({ id: newDocument.insertedId, ...document });
   },
+
+  // Méthode getShow
   getShow: async (req, res) => {
     const id = req.params.id;
+
+    // Récupération de l'user Redis id
+    const xTokenHeader = req.headers['x-token'];
+    const key = `auth_${xTokenHeader}`;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Récupération de l'User dans la DB
+    const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
       const objectId = new ObjectId(id);
 
-      // Récupération de l'user Redis id
-      const xTokenHeader = req.headers['x-token'];
-      const key = `auth_${xTokenHeader}`;
-      const userId = await redis.get(key);
-      if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      // Récupération de l'User dans la DB
-      const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
-      if (!user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId });
+      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId: new ObjectId(userId) });
       if (!fileToShow) {
         return res.status(404).json({ error: 'Not found' });
       }
@@ -106,22 +109,24 @@ const FilesController = {
       return res.status(404).json({ error: 'Not found' });
     }
   },
+
+  // Méthode getIndex
   getIndex: async (req, res) => {
+    // Récupération de l'user Redis id
+    const xTokenHeader = req.headers['x-token'];
+    const key = `auth_${xTokenHeader}`;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Récupération de l'User dans la DB
+    const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     try {
-      // Récupération de l'user Redis id
-      const xTokenHeader = req.headers['x-token'];
-      const key = `auth_${xTokenHeader}`;
-      const userId = await redis.get(key);
-      if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      // Récupération de l'User dans la DB
-      const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
-      if (!user) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
       // Récupération des query parameters
       const { parentId = 0, page = 0 } = req.query;
 
@@ -132,7 +137,7 @@ const FilesController = {
 
       // Création de la pagination en utilisant .aggregate
       const listFile = await db.client.db(db.database).collection('files').aggregate([
-        { $match: { userId, parentId: parentIdFinal } },
+        { $match: { userId: new ObjectId(userId), parentId: parentIdFinal } },
         { $skip: parseInt(page) * 20 },
         { $limit: 20 }
       ]).toArray();
