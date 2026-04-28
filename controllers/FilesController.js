@@ -17,7 +17,9 @@ const FilesController = {
     }
 
     // Récupération des paramètres du file
-    const { name, type, parentId = 0, isPublic = false, data } = req.body;
+    const {
+      name, type, parentId = 0, isPublic = false, data
+    } = req.body;
 
     // Vérifications de name, type et data
     if (!name) {
@@ -46,7 +48,9 @@ const FilesController = {
 
     // Si le type du file est un folder
     if (type === 'folder') {
-      const document = { userId, name, type, isPublic, parentId };
+      const document = {
+        userId, name, type, isPublic, parentId
+      };
       const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
       // Retour de l'id ET des paramètres du doc.
       // '...document' permet "d'étaler" les attributs de document.
@@ -64,7 +68,9 @@ const FilesController = {
     fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
 
     // Stockage du file
-    const document = { userId, name, type, isPublic, parentId, localPath: filePath };
+    const document = {
+      userId, name, type, isPublic, parentId, localPath: filePath
+    };
     const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
     // Retour de l'id ET des paramètres du doc.
     // '...document' permet "d'étaler" les attributs de document.
