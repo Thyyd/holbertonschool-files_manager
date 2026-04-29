@@ -9,7 +9,7 @@ const DB_URL = `mongodb://${DB_HOST}:${DB_PORT}`;
 class DBClient {
   // Constructeur
   constructor() {
-    this.client = new mongodb.MongoClient(DB_URL);
+    this.client = new mongodb.MongoClient(DB_URL, { useUnifiedTopology: true });
     this.database = null
     this.client.connect()
     .then(() => {
