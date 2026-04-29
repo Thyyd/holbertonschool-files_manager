@@ -90,12 +90,6 @@ const FilesController = {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Récupération de l'User dans la DB
-    const user = await db.database.collection('users').findOne({ _id: new ObjectId(userId) });
-    if (!user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     try {
       const objectId = new ObjectId(id);
 
@@ -118,12 +112,6 @@ const FilesController = {
     const key = `auth_${xTokenHeader}`;
     const userId = await redis.get(key);
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    // Récupération de l'User dans la DB
-    const user = await db.database.collection('users').findOne({ _id: new ObjectId(userId) });
-    if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
