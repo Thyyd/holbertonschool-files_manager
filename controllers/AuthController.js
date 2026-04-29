@@ -24,7 +24,7 @@ const AuthController = {
 
     // Hashage du pwd pour comparer les données stockées dans la DB
     const hashedPwd = crypto.createHash('sha1').update(password).digest('hex');
-    const userExists = await db.client.db(db.database).collection('users').findOne({ email, password: hashedPwd });
+    const userExists = await db.database.collection('users').findOne({ email, password: hashedPwd });
     if (!userExists) {
       return res.status(401).json({ error: 'Unauthorized' });
     }

@@ -17,7 +17,7 @@ const UsersController = {
     }
 
     // Vérifie que l'email n'existe pas déjà dans la DB
-    const emailExists = await db.client.db(db.database).collection('users').findOne({ email });
+    const emailExists = await db.database.collection('users').findOne({ email });
     if (emailExists) {
       return res.status(400).json({ error: 'Already exist' });
     }
@@ -25,7 +25,7 @@ const UsersController = {
     // Hashage du pwd
     const hashedPwd = crypto.createHash('sha1').update(password).digest('hex');
 
-    const newId = await db.client.db(db.database).collection('users').insertOne({ email, password: hashedPwd });
+    const newId = await db.database.collection('users').insertOne({ email, password: hashedPwd });
     return res.status(201).json({ id: newId.insertedId, email });
   },
 
@@ -39,7 +39,7 @@ const UsersController = {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
+    const user = await db.database.collection('users').findOne({ _id: new ObjectId(userId) });
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }

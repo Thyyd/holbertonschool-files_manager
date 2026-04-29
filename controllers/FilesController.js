@@ -37,7 +37,7 @@ const FilesController = {
 
     // Vérification du parentId
     if (parentId) {
-      const file = await db.client.db(db.database).collection('files').findOne({ _id: new ObjectId(parentId) });
+      const file = await db.database.collection('files').findOne({ _id: new ObjectId(parentId) });
       if (!file) {
         return res.status(400).json({ error: 'Parent not found' });
       }
@@ -51,7 +51,7 @@ const FilesController = {
       const document = {
         userId: new ObjectId(userId), name, type, isPublic, parentId,
       };
-      const folderDocument = await db.client.db(db.database).collection('files').insertOne(document);
+      const folderDocument = await db.database.collection('files').insertOne(document);
       // Retour de l'id ET des paramètres du doc.
       // '...document' permet "d'étaler" les attributs de document.
       return res.status(201).json({ id: folderDocument.insertedId, ...document });
@@ -71,7 +71,7 @@ const FilesController = {
     const document = {
       userId: new ObjectId(userId), name, type, isPublic, parentId, localPath: filePath,
     };
-    const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
+    const newDocument = await db.database.collection('files').insertOne(document);
     // Retour de l'id ET des paramètres du doc.
     // '...document' permet "d'étaler" les attributs de document.
     return res.status(201).json({ id: newDocument.insertedId, ...document });
@@ -90,7 +90,7 @@ const FilesController = {
     }
 
     // Récupération de l'User dans la DB
-    const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
+    const user = await db.database.collection('users').findOne({ _id: new ObjectId(userId) });
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -98,7 +98,7 @@ const FilesController = {
     try {
       const objectId = new ObjectId(id);
 
-      const fileToShow = await db.client.db(db.database).collection('files').findOne({ _id: objectId, userId: new ObjectId(userId) });
+      const fileToShow = await db.database.collection('files').findOne({ _id: objectId, userId: new ObjectId(userId) });
       if (!fileToShow) {
         return res.status(404).json({ error: 'Not found' });
       }
@@ -121,7 +121,7 @@ const FilesController = {
     }
 
     // Récupération de l'User dans la DB
-    const user = await db.client.db(db.database).collection('users').findOne({ _id: new ObjectId(userId) });
+    const user = await db.database.collection('users').findOne({ _id: new ObjectId(userId) });
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -147,7 +147,7 @@ const FilesController = {
       }
 
       // Création de la pagination en utilisant .aggregate
-      const listFile = await db.client.db(db.database).collection('files').aggregate([
+      const listFile = await db.database.collection('files').aggregate([
         { $match: matchQuery },
         { $skip: parseInt(page) * 20 },
         { $limit: 20 }
