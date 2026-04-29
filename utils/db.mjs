@@ -10,13 +10,13 @@ class DBClient {
   // Constructeur
   constructor() {
     this.client = new mongodb.MongoClient(DB_URL, { useUnifiedTopology: true });
-    this.db = null
+    this.database = null
     this.client.connect()
     .then(() => {
-      this.db = this.client.db(DB_DATABASE);
+      this.database = this.client.db(DB_DATABASE);
     })
     .catch(() => {
-      this.db = null;
+      this.database = null;
     });
   }
 
@@ -27,13 +27,13 @@ class DBClient {
 
   // Méthode nbUsers
   async nbUsers() {
-    const userCount = await this.client.db(this.database).collection('users').countDocuments();
+    const userCount = await this.database.collection('users').countDocuments();
     return userCount;
   }
 
   // Méthode nbFiles
   async nbFiles() {
-    const filesCount = await this.client.db(this.database).collection('files').countDocuments();
+    const filesCount = await this.database.collection('files').countDocuments();
     return filesCount;
   }
 }
