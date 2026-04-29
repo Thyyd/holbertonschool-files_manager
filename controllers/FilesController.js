@@ -6,6 +6,7 @@ import db from '../utils/db';
 import redis from '../utils/redis';
 
 const FilesController = {
+  // Méthode postUpload
   postUpload: async (req, res) => {
     // Récupération du header X-Token
     const xTokenHeader = req.headers['x-token'];
