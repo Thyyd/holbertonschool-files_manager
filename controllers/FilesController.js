@@ -130,14 +130,25 @@ const FilesController = {
       // Récupération des query parameters
       const { parentId = 0, page = 0 } = req.query;
 
-      let parentIdFinal = parentId;
-      if (parentId === 0 || parentId === '0') {
-        parentIdFinal = 0;
+      // Conversion d'userId en ObjectId pour le chercher dans la DB
+      const matchQuery = { userId: new ObjectId(userId) };
+
+      if (parentId === 0 || parentId === '0' || !parentId) {
+        // Cas "root" qui couvre les 3 formes possibles stockées dans la DB
+        matchQuery.$or = [
+        { parentId: 0 },
+        { parentId: '0' },
+        { parentId: { $exists: false } }
+        ];
+      }
+      else {
+        // Conversion de parentId en ObjectId pour le chercher dans la DB
+        matchQuery.parentId = new ObjectId(parentId);
       }
 
       // Création de la pagination en utilisant .aggregate
       const listFile = await db.client.db(db.database).collection('files').aggregate([
-        { $match: { userId: new ObjectId(userId), parentId: parentIdFinal } },
+        { $match: matchQuery },
         { $skip: parseInt(page) * 20 },
         { $limit: 20 }
       ]).toArray();
