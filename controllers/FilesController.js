@@ -49,12 +49,12 @@ const FilesController = {
     // Si le type du file est un folder
     if (type === 'folder') {
       const document = {
-        userId, name, type, isPublic, parentId,
+        userId: new ObjectId(userId), name, type, isPublic, parentId,
       };
-      const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
+      const folderDocument = await db.client.db(db.database).collection('files').insertOne(document);
       // Retour de l'id ET des paramètres du doc.
       // '...document' permet "d'étaler" les attributs de document.
-      return res.status(201).json({ id: newDocument.insertedId, ...document });
+      return res.status(201).json({ id: folderDocument.insertedId, ...document });
     }
 
     // Récupération du dossier de stockage via la variable d'environnement FOLDER_PATH
@@ -69,7 +69,7 @@ const FilesController = {
 
     // Stockage du file
     const document = {
-      userId, name, type, isPublic, parentId, localPath: filePath,
+      userId: new ObjectId(userId), name, type, isPublic, parentId, localPath: filePath,
     };
     const newDocument = await db.client.db(db.database).collection('files').insertOne(document);
     // Retour de l'id ET des paramètres du doc.
