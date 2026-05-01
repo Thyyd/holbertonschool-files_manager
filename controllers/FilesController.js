@@ -129,16 +129,12 @@ const FilesController = {
       if (parentId === '0') {
         // Cas "root"
         matchQuery.parentId = { $in: [0, '0'] };
-      }
-      else {
+      } else if (ObjectId.isValid(parentId)) {
         // Vérification du parentId récupéré en query sous format ObjectId
-        if (ObjectId.isValid(parentId)) {
-          matchQuery.parentId = { $in: [parentId, new ObjectId(parentId)] };
-        }
         // Sinon, vérification tel quel, sans conversion
-        else {
-          matchQuery.parentId = parentId;
-        }
+          matchQuery.parentId = { $in: [parentId, new ObjectId(parentId)] };
+      } else {
+        matchQuery.parentId = parentId;
       }
 
       // Création de la pagination
@@ -156,7 +152,6 @@ const FilesController = {
         isPublic: file.isPublic,
         parentId: file.parentId,
       })));
-
     }
     catch (_err) {
       return res.status(500).json({ error: 'Internal error' });
