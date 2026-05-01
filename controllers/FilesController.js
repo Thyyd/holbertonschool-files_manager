@@ -99,8 +99,7 @@ const FilesController = {
       }
 
       return res.status(200).json(fileToShow);
-    }
-    catch (_err) {
+    } catch (_err) {
       return res.status(500).json({ error: 'Internal error' });
     }
   },
@@ -108,7 +107,7 @@ const FilesController = {
   // Méthode getIndex
   getIndex: async (req, res) => {
     // Récupération de l'user Redis id
-    const xTokenHeader = req.headers['x-token'];
+    const xTokenHeader = req.header('x-token');
     const key = `auth_${xTokenHeader}`;
     const userId = await redis.get(key);
     if (!userId) {
@@ -132,7 +131,7 @@ const FilesController = {
       } else if (ObjectId.isValid(parentId)) {
         // Vérification du parentId récupéré en query sous format ObjectId
         // Sinon, vérification tel quel, sans conversion
-          matchQuery.parentId = { $in: [parentId, new ObjectId(parentId)] };
+        matchQuery.parentId = { $in: [parentId, new ObjectId(parentId)] };
       } else {
         matchQuery.parentId = parentId;
       }
@@ -152,8 +151,7 @@ const FilesController = {
         isPublic: file.isPublic,
         parentId: file.parentId,
       })));
-    }
-    catch (_err) {
+    } catch (_err) {
       return res.status(500).json({ error: 'Internal error' });
     }
   },
