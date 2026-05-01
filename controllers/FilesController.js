@@ -83,7 +83,7 @@ const FilesController = {
     const id = req.params.id;
 
     // Récupération de l'user Redis id
-    const xTokenHeader = req.headers['x-token'];
+    const xTokenHeader = req.header('x-token');
     const key = `auth_${xTokenHeader}`;
     const userId = await redis.get(key);
     if (!userId) {
