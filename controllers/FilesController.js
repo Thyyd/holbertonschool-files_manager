@@ -101,7 +101,7 @@ const FilesController = {
       return res.status(200).json(fileToShow);
     }
     catch (_err) {
-      return res.status(404).json({ error: 'Not found' });
+      return res.status(500).json({ error: 'Internal error' });
     }
   },
 
@@ -116,10 +116,6 @@ const FilesController = {
     }
 
     try {
-      // test
-      console.log('db.database:', db.database);
-      console.log('isAlive:', db.isAlive());
-
       // Récupération des query parameters
       const parentId = req.query.parentId || '0';
       const page = Number(req.query.page || 0);
@@ -151,10 +147,19 @@ const FilesController = {
         .limit(20)
         .toArray();
 
-      return res.status(200).json(listFile);
+      // return res.status(200).json(listFile);
+      return res.status(200).json(listFile.map((file) => ({
+        id: file._id.toString(),
+        userId: file.userId.toString(),
+        name: file.name,
+        type: file.type,
+        isPublic: file.isPublic,
+        parentId: file.parentId,
+      })));
+
     }
     catch (_err) {
-      return res.status(404).json({ error: 'Not found' });
+      return res.status(500).json({ error: 'Internal error' });
     }
   },
 };
