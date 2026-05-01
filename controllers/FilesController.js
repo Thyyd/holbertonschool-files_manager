@@ -158,38 +158,7 @@ const FilesController = {
 
   // Méthode putPublish
   putPublish: async (req, res) => {
-    const { id } = req.params.id;
-
-    // Récupération de l'user Redis id
-    const xTokenHeader = req.header('x-token');
-    const key = `auth_${xTokenHeader}`;
-    const userId = await redis.get(key);
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    try {
-      const objectId = new ObjectId(id);
-
-      const fileToUnpublish = await db.database.collection('files').findOneAndUpdate(
-        { _id: objectId, userId: new ObjectId(userId) },
-        { $set: {isPublic: true} },
-        { returnDocument: 'after' }
-      );
-      if (!fileToUnpublish) {
-        return res.status(404).json({ error: 'Not found' });
-      }
-
-      return res.status(200).json(fileToUnpublish);
-    }
-    catch (_err) {
-      return res.status(404).json({ error: 'Not found' });
-    }
-  },
-
-  // Méthode putUnpublish
-  putUnpublish: async (req, res) => {
-    const { id } = req.params.id;
+    const { id } = req.params;
 
     // Récupération de l'user Redis id
     const xTokenHeader = req.header('x-token');
@@ -204,17 +173,60 @@ const FilesController = {
 
       const fileToPublish = await db.database.collection('files').findOneAndUpdate(
         { _id: objectId, userId: new ObjectId(userId) },
-        { $set: {isPublic: false} },
+        { $set: { isPublic: true } },
         { returnDocument: 'after' }
       );
       if (!fileToPublish) {
         return res.status(404).json({ error: 'Not found' });
       }
 
-      return res.status(200).json(fileToPublish);
+      return res.status(200).json({
+        id: fileToPublish._id.toString(),
+        userId: fileToPublish.userId.toString(),
+        name: fileToPublish.name,
+        type: fileToPublish.type,
+        isPublic: fileToPublish.isPublic,
+        parentId: fileToPublish.parentId,
+      });
+    } catch (_err) {
+      return res.status(500).json({ error: 'Internal error' });
     }
-    catch (_err) {
-      return res.status(404).json({ error: 'Not found' });
+  },
+
+  // Méthode putUnpublish
+  putUnpublish: async (req, res) => {
+    const { id } = req.params;
+
+    // Récupération de l'user Redis id
+    const xTokenHeader = req.header('x-token');
+    const key = `auth_${xTokenHeader}`;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const objectId = new ObjectId(id);
+
+      const fileToUnpublish = await db.database.collection('files').findOneAndUpdate(
+        { _id: objectId, userId: new ObjectId(userId) },
+        { $set: { isPublic: false } },
+        { returnDocument: 'after' }
+      );
+      if (!fileToUnpublish) {
+        return res.status(404).json({ error: 'Not found' });
+      }
+
+      return res.status(200).json({
+        id: fileToUnpublish._id.toString(),
+        userId: fileToUnpublish.userId.toString(),
+        name: fileToUnpublish.name,
+        type: fileToUnpublish.type,
+        isPublic: fileToUnpublish.isPublic,
+        parentId: fileToUnpublish.parentId,
+      });
+    } catch (_err) {
+      return res.status(500).json({ error: 'Internal error' });
     }
   },
 };
