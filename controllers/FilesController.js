@@ -174,7 +174,7 @@ const FilesController = {
       const fileToPublish = await db.database.collection('files').findOneAndUpdate(
         { _id: objectId, userId: new ObjectId(userId) },
         { $set: { isPublic: true } },
-        { returnDocument: 'after' }
+        { returnDocument: 'after' },
       );
 
       if (!fileToPublish.value) {
@@ -212,7 +212,7 @@ const FilesController = {
       const fileToUnpublish = await db.database.collection('files').findOneAndUpdate(
         { _id: objectId, userId: new ObjectId(userId) },
         { $set: { isPublic: false } },
-        { returnDocument: 'after' }
+        { returnDocument: 'after' },
       );
       if (!fileToUnpublish.value) {
         return res.status(404).json({ error: 'Not found' });
