@@ -117,18 +117,18 @@ const FilesController = {
 
     try {
       // Récupération des query parameters
-      const { parentId = 0, page = 0 } = req.query;
+      const parentId = req.query.parentId || '0';
+      const page = Number(req.query.page || 0);
+
+      // Vérification que page ne soit ni NaN, ni négatif. S'il l'est, renvoie 0, sinon page
+      const pagination = Number.isNaN(page) || page < 0 ? 0 : page;
 
       // Conversion d'userId en ObjectId pour le chercher dans la DB
       const matchQuery = { userId: new ObjectId(userId) };
 
-      if (parentId === 0 || parentId === '0' || !parentId) {
-        // Cas "root" qui couvre les 3 formes possibles stockées dans la DB
-        matchQuery.$or = [
-        { parentId: 0 },
-        { parentId: '0' },
-        { parentId: { $exists: false } }
-        ];
+      if (parentId === '0') {
+        // Cas "root"
+        matchQuery.parentId = { $in: [0, '0'] };
       }
       else {
         // Conversion de parentId en ObjectId pour le chercher dans la DB
@@ -138,7 +138,7 @@ const FilesController = {
       // Création de la pagination en utilisant .aggregate
       const listFile = await db.database.collection('files').aggregate([
         { $match: matchQuery },
-        { $skip: parseInt(page) * 20 },
+        { $skip: pagination * 20 },
         { $limit: 20 }
       ]).toArray();
 
