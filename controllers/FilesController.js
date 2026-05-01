@@ -266,13 +266,12 @@ const FilesController = {
       const mimeFile = mime.contentType(linkedFile.name);
       const fileContent = fs.readFileSync(linkedFile.localPath);
 
-      res.setHeader('Content-Type', mimeFile);  // Définit le MIME-type dans les Headers res
+      res.setHeader('Content-Type', mimeFile); // Définit le MIME-type dans les Headers res
       return res.status(200).send(fileContent);
-
     } catch (_err) {
       return res.status(500).json({ error: 'Internal error' });
     }
-  }
+  },
 };
 
 export default FilesController;
