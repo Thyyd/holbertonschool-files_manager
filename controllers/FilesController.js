@@ -176,18 +176,18 @@ const FilesController = {
         { $set: { isPublic: true } },
         { returnDocument: 'after' }
       );
-      console.log('fileToPublish success:', fileToPublish);
+
       if (!fileToPublish.value) {
         return res.status(404).json({ error: 'Not found' });
       }
 
       return res.status(200).json({
-        id: fileToPublish._id.toString(),
-        userId: fileToPublish.userId.toString(),
-        name: fileToPublish.name,
-        type: fileToPublish.type,
-        isPublic: fileToPublish.isPublic,
-        parentId: fileToPublish.parentId,
+        id: fileToPublish.value._id.toString(),
+        userId: fileToPublish.value.userId.toString(),
+        name: fileToPublish.value.name,
+        type: fileToPublish.value.type,
+        isPublic: fileToPublish.value.isPublic,
+        parentId: fileToPublish.value.parentId,
       });
     } catch (_err) {
       return res.status(500).json({ error: 'Internal error' });
@@ -219,12 +219,12 @@ const FilesController = {
       }
 
       return res.status(200).json({
-        id: fileToUnpublish._id.toString(),
-        userId: fileToUnpublish.userId.toString(),
-        name: fileToUnpublish.name,
-        type: fileToUnpublish.type,
-        isPublic: fileToUnpublish.isPublic,
-        parentId: fileToUnpublish.parentId,
+        id: fileToUnpublish.value._id.toString(),
+        userId: fileToUnpublish.value.userId.toString(),
+        name: fileToUnpublish.value.name,
+        type: fileToUnpublish.value.type,
+        isPublic: fileToUnpublish.value.isPublic,
+        parentId: fileToUnpublish.value.parentId,
       });
     } catch (_err) {
       return res.status(500).json({ error: 'Internal error' });
