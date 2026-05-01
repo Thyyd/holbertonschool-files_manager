@@ -176,6 +176,7 @@ const FilesController = {
         { $set: { isPublic: true } },
         { returnDocument: 'after' }
       );
+      console.log('fileToPublish:', fileToPublish);
       if (!fileToPublish) {
         return res.status(404).json({ error: 'Not found' });
       }
