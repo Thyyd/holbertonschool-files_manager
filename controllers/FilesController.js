@@ -135,12 +135,11 @@ const FilesController = {
         matchQuery.parentId = new ObjectId(parentId);
       }
 
-      // Création de la pagination en utilisant .aggregate
-      const listFile = await db.database.collection('files').aggregate([
-        { $match: matchQuery },
-        { $skip: pagination * 20 },
-        { $limit: 20 }
-      ]).toArray();
+      // Création de la pagination
+      const listFile = await db.database.collection('files').find(matchQuery)
+        .skip(pagination * 20)
+        .limit(20)
+        .toArray();
 
       return res.status(200).json(listFile);
     }
