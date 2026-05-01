@@ -80,7 +80,7 @@ const FilesController = {
 
   // Méthode getShow
   getShow: async (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
 
     // Récupération de l'user Redis id
     const xTokenHeader = req.header('x-token');
