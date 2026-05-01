@@ -116,6 +116,10 @@ const FilesController = {
     }
 
     try {
+      // test
+      console.log('db.database:', db.database);
+      console.log('isAlive:', db.isAlive());
+
       // Récupération des query parameters
       const parentId = req.query.parentId || '0';
       const page = Number(req.query.page || 0);

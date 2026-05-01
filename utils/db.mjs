@@ -10,14 +10,15 @@ class DBClient {
   // Constructeur
   constructor() {
     this.client = new mongodb.MongoClient(DB_URL, { useUnifiedTopology: true });
-    this.database = null
+    this.database = null;
+
     this.client.connect()
-    .then(() => {
-      this.database = this.client.db(DB_DATABASE);
-    })
-    .catch(() => {
-      this.database = null;
-    });
+      .then(() => {
+        this.database = this.client.db(DB_DATABASE);
+      })
+      .catch(() => {
+        this.database = null;
+      });
   }
 
   // Méthode isAlive
