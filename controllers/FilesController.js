@@ -131,8 +131,14 @@ const FilesController = {
         matchQuery.parentId = { $in: [0, '0'] };
       }
       else {
-        // Conversion de parentId en ObjectId pour le chercher dans la DB
-        matchQuery.parentId = new ObjectId(parentId);
+        // Vérification du parentId récupéré en query sous format ObjectId
+        if (ObjectId.isValid(parentId)) {
+          matchQuery.parentId = { $in: [parentId, new ObjectId(parentId)] };
+        }
+        // Sinon, vérification tel quel, sans conversion
+        else {
+          matchQuery.parentId = parentId;
+        }
       }
 
       // Création de la pagination
