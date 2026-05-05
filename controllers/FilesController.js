@@ -3,8 +3,11 @@ import { ObjectId } from 'mongodb';
 import fs from 'fs';
 import path from 'path';
 import mime from 'mime-types';
+import Bull from 'bull';
 import db from '../utils/db';
 import redis from '../utils/redis';
+
+const fileQueue = new Bull('fileQueue');
 
 const FilesController = {
   // Méthode postUpload
@@ -74,6 +77,9 @@ const FilesController = {
       userId: new ObjectId(userId), name, type, isPublic, parentId, localPath: filePath,
     };
     const newDocument = await db.database.collection('files').insertOne(document);
+    if (type === 'image') {
+      await fileQueue.add({ userId, fileId: newDocument.insertedId });
+    }
     // Retour de l'id ET des paramètres du doc.
     // '...document' permet "d'étaler" les attributs de document.
     return res.status(201).json({ id: newDocument.insertedId, ...document });
@@ -235,6 +241,7 @@ const FilesController = {
   // Méthode getFile
   getFile: async (req, res) => {
     const { id } = req.params;
+    const { size } = req.query;
 
     // Récupération de l'user Redis id
     const xTokenHeader = req.header('x-token');
@@ -257,14 +264,17 @@ const FilesController = {
         return res.status(400).json({ error: "A folder doesn't have content" });
       }
 
+      // Création de la variable filePath
+      const filePath = size ? `${linkedFile.localPath}_${size}` : linkedFile.localPath;
+
       // Vérification du localPath
-      if (!linkedFile.localPath || !fs.existsSync(linkedFile.localPath)) {
+      if (!filePath || !fs.existsSync(filePath)) {
         return res.status(404).json({ error: 'Not found' });
       }
 
       // Récupération du MIME-type et du Content du file
       const mimeFile = mime.contentType(linkedFile.name);
-      const fileContent = fs.readFileSync(linkedFile.localPath);
+      const fileContent = fs.readFileSync(filePath);
 
       res.setHeader('Content-Type', mimeFile); // Définit le MIME-type dans les Headers res
       return res.status(200).send(fileContent);
